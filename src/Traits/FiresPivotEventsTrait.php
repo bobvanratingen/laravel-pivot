@@ -18,11 +18,12 @@ trait FiresPivotEventsTrait
     {
         list($idsOnly, $idsAttributes) = $this->getIdsWithAttributes($ids, $attributes);
 
-        $this->parent->fireModelEvent('pivotAttaching', true, $this->getRelationName(), $idsOnly, $idsAttributes);
-        $parentResult = parent::attach($ids, $attributes, $touch);
-        $this->parent->fireModelEvent('pivotAttached', false, $this->getRelationName(), $idsOnly, $idsAttributes);
-
-        return $parentResult;
+        if($this->parent->fireModelEvent('pivotAttaching', true, $this->getRelationName(), $idsOnly, $idsAttributes)) {
+            $parentResult = parent::attach($ids, $attributes, $touch);
+            $this->parent->fireModelEvent('pivotAttached', false, $this->getRelationName(), $idsOnly, $idsAttributes);
+            return $parentResult;
+        }
+        return false;
     }
 
     /**
@@ -41,11 +42,12 @@ trait FiresPivotEventsTrait
 
         list($idsOnly) = $this->getIdsWithAttributes($ids);
 
-        $this->parent->fireModelEvent('pivotDetaching', true, $this->getRelationName(), $idsOnly);
-        $parentResult = parent::detach($ids, $touch);
-        $this->parent->fireModelEvent('pivotDetached', false, $this->getRelationName(), $idsOnly);
-
-        return $parentResult;
+        if($this->parent->fireModelEvent('pivotDetaching', true, $this->getRelationName(), $idsOnly)) {
+            $parentResult = parent::detach($ids, $touch);
+            $this->parent->fireModelEvent('pivotDetached', false, $this->getRelationName(), $idsOnly);
+            return $parentResult;
+        }
+        return false;
     }
 
     /**
@@ -61,11 +63,12 @@ trait FiresPivotEventsTrait
     {
         list($idsOnly, $idsAttributes) = $this->getIdsWithAttributes($id, $attributes);
 
-        $this->parent->fireModelEvent('pivotUpdating', true, $this->getRelationName(), $idsOnly, $idsAttributes);
-        $parentResult = parent::updateExistingPivot($id, $attributes, $touch);
-        $this->parent->fireModelEvent('pivotUpdated', false, $this->getRelationName(), $idsOnly, $idsAttributes);
-
-        return $parentResult;
+        if($this->parent->fireModelEvent('pivotUpdating', true, $this->getRelationName(), $idsOnly, $idsAttributes)) {
+            $parentResult = parent::updateExistingPivot($id, $attributes, $touch);
+            $this->parent->fireModelEvent('pivotUpdated', false, $this->getRelationName(), $idsOnly, $idsAttributes);
+            return $parentResult;
+        }
+        return false;
     }
 
     /**
